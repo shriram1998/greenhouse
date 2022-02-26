@@ -1,0 +1,22 @@
+{
+  "name": "greenhouse",
+  "baseUrl": ".",
+  "version": "0.0.1",
+  "description": "Backend for Kaggle Greenhouse dataset",
+  "main": "index.js",
+  "author": "Shriram",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^7.5.0",
+    "express": "^4.17.3",
+    "swagger-ui-express": "^4.3.0"
+  },
+  "engines": {
+    "node": "16.x"
+  }
+}

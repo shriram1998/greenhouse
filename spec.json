@@ -1,0 +1,228 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Greeenhouse API",
+    "description": "Greenhouse data of countries with parameter and temporal queries. For category abbreviations refer [here](/abbr)",
+    "version": "0.0.1",
+    "contact": {
+      "email": "shriramraghav1998@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "externalDocs": {
+    "description": "Kaggle site for the dataset",
+    "url": "https://www.kaggle.com/unitednations/international-greenhouse-gas-emissions"
+  },
+  "tags": [
+    {
+      "name": "All",
+      "description": "All countries data endpoints"
+    },
+    {
+      "name": "Single",
+      "description": "Single country data endpoints"
+    }
+  ],
+  "paths": {
+    "/countries": {
+      "get": {
+        "summary": "Show all available country details",
+        "description": "Get all country names, ids and and their possible values for startYear and endYear",
+        "operationId": "getDataAllCountries",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountriesData"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "All"
+        ]
+      }
+    },
+    "/country/{countryId}": {
+      "get": {
+        "summary": "Get greenhouse data by country id",
+        "description": "Return greenhouse values for the country represented by the id after query is applied",
+        "operationId": "getDatabyId",
+        "parameters": [
+          {
+            "name": "countryId",
+            "in": "path",
+            "description": "Country id to get the values (1-43)",
+            "required": true,
+            "schema": {
+              "example": 43,
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "description": "Starting year to filter the data (1990-2014)",
+            "in": "query",
+            "name": "startYear",
+            "required": false,
+            "schema": {
+              "example": 1995,
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "description": "End year to filter the data (1990-2014)",
+            "in": "query",
+            "name": "endYear",
+            "required": false,
+            "schema": {
+              "example": 2000,
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "description": "category",
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "CO2",
+                  "GHGS",
+                  "GHGSW",
+                  "HFCS",
+                  "CH4",
+                  "NF3",
+                  "N2O",
+                  "PFCS",
+                  "SF6",
+                  "FCS"
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountryData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid year values",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Country not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Single"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://greenhouse-openapi.herokuapp.com"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Error":{
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "example":404,
+            "format": "int64"
+          },
+          "message": {
+            "type": "string",
+            "example": "Error message"
+          }
+        }
+      },
+      "CountriesData":{
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64",
+              "example": 43
+            },
+            "country_or_area": {
+              "type": "string"
+            },
+            "years": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "format": "int64",
+                "example":1995
+              }
+            }
+          }
+        }
+      },
+      "CountryData": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 43
+          },
+          "country_or_area": {
+            "type": "string"
+          },
+          "values": {
+            "type": "object",
+            "properties": {
+              "firstYear": {
+                "type": "object",
+                "properties": {
+                  "category":{
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
