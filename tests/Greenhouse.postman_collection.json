@@ -1,0 +1,499 @@
+{
+	"info": {
+		"_postman_id": "bf73b288-5e4d-432d-87cd-004353a93df4",
+		"name": "Greenhouse",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Countries",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"/countries\", function () {\r",
+							"    const countries=pm.collectionVariables.get(\"Countries\");\r",
+							"    const years=pm.collectionVariables.get(\"Years\");\r",
+							"\r",
+							"    const actual=pm.response.json();\r",
+							"\r",
+							"    //check count\r",
+							"    pm.expect(actual).to.have.lengthOf(countries);\r",
+							"\r",
+							"    //random sample test\r",
+							"    pm.expect(actual[23].country_or_area).to.eql('Lithuania');\r",
+							"    pm.expect(actual[23].years).to.have.members(JSON.parse(years));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://greenhouse-openapi.herokuapp.com/countries",
+					"protocol": "https",
+					"host": [
+						"greenhouse-openapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Country",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"/country without query\", function () {\r",
+							"    const years=pm.collectionVariables.get(\"Years\");\r",
+							"    const actual=pm.response.json();\r",
+							"\r",
+							"    //check response type\r",
+							"    pm.expect(actual).to.be.an('object')\r",
+							"\r",
+							"    //data test\r",
+							"    pm.expect(actual.id).to.eql(12);\r",
+							"    pm.expect(actual.country_or_area).to.eql('European Union');\r",
+							"    pm.expect(actual.values).to.have.all.keys(JSON.parse(years));\r",
+							"    pm.expect(actual.values[1991]).to.deep.equal({\r",
+							"        CO2: 4403723.161,\r",
+							"        GHGS: 5566394.793,\r",
+							"        GHGSW: 5558236.556,\r",
+							"        HFCS: 29148.25306,\r",
+							"        CH4: 715378.7049,\r",
+							"        NF3: 25.48622903,\r",
+							"        N2O: 370242.0889,\r",
+							"        PFCS: 23023.08038,\r",
+							"        SF6: 11459.05799,\r",
+							"        FCS: 5236.72332\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://greenhouse-openapi.herokuapp.com/country/:id",
+					"protocol": "https",
+					"host": [
+						"greenhouse-openapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"country",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "12"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Country with temporal query",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"/country with temporal query\", function () {\r",
+							"    const actual=pm.response.json();\r",
+							"\r",
+							"    //check response type\r",
+							"    pm.expect(actual).to.be.an('object')\r",
+							"\r",
+							"    //data test\r",
+							"\r",
+							"    // pm.expect(actual.id).to.eql(40);\r",
+							"    // pm.expect(actual.country_or_area).to.eql('Turkey');\r",
+							"    \r",
+							"    pm.expect(actual.values).to.have.all.keys(['2010','2011','2012']);\r",
+							"    pm.expect(actual.values[2010]).to.deep.equal({\r",
+							"        CO2: 320356.659,\r",
+							"        GHGS: 395282.5102,\r",
+							"        GHGSW: 395282.5102,\r",
+							"        HFCS: 3054.344671,\r",
+							"        CH4: 51415.13821,\r",
+							"        N2O: 19620.89265,\r",
+							"        SF6: 835.4756915\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://greenhouse-openapi.herokuapp.com/country/:id?startYear=2010&endYear=2012",
+					"protocol": "https",
+					"host": [
+						"greenhouse-openapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"country",
+						":id"
+					],
+					"query": [
+						{
+							"key": "startYear",
+							"value": "2010"
+						},
+						{
+							"key": "endYear",
+							"value": "2012"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "40",
+							"description": "Turkey"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Country with category query",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"/country with category query\", function () {\r",
+							"    const years=pm.collectionVariables.get(\"Years\");\r",
+							"    const actual=pm.response.json();\r",
+							"\r",
+							"    //check response type\r",
+							"    pm.expect(actual).to.be.an('object')\r",
+							"\r",
+							"    //data test\r",
+							"    // pm.expect(actual.id).to.eql(40);\r",
+							"    // pm.expect(actual.country_or_area).to.eql('Turkey');\r",
+							"    pm.expect(actual.values).to.have.all.keys(JSON.parse(years));\r",
+							"    pm.expect(actual.values[2010]).to.deep.equal({ CO2: 320356.659, N2O: 19620.89265 });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://greenhouse-openapi.herokuapp.com/country/:id?category=N2O&category=CO2",
+					"protocol": "https",
+					"host": [
+						"greenhouse-openapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"country",
+						":id"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "N2O"
+						},
+						{
+							"key": "category",
+							"value": "CO2"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "40",
+							"description": "Turkey"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Country with all queries",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"/country with all queries\", function () {\r",
+							"    const actual=pm.response.json();\r",
+							"\r",
+							"    //check response type\r",
+							"    pm.expect(actual).to.be.an('object')\r",
+							"\r",
+							"    //data test\r",
+							"    // pm.expect(actual.id).to.eql(40);\r",
+							"    // pm.expect(actual.country_or_area).to.eql('Turkey');\r",
+							"    pm.expect(actual.values).to.have.all.keys(['2010','2011','2012']);\r",
+							"    pm.expect(actual.values[2010]).to.deep.equal({CO2: 320356.659,N2O: 19620.89265});\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://greenhouse-openapi.herokuapp.com/country/:id?startYear=2010&endYear=2012&category=N2O&category=CO2",
+					"protocol": "https",
+					"host": [
+						"greenhouse-openapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"country",
+						":id"
+					],
+					"query": [
+						{
+							"key": "startYear",
+							"value": "2010"
+						},
+						{
+							"key": "endYear",
+							"value": "2012"
+						},
+						{
+							"key": "category",
+							"value": "N2O"
+						},
+						{
+							"key": "category",
+							"value": "CO2"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "40",
+							"description": "Turkey"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Error: Country",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"/country with invalid id\", function () {\r",
+							"    const actual=pm.response.json();\r",
+							"\r",
+							"    //check response\r",
+							"    pm.expect(actual).to.be.an('object')\r",
+							"    pm.response.to.have.status(404);\r",
+							"    pm.expect(actual.message).to.eql('Country not found')\r",
+							"    \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://greenhouse-openapi.herokuapp.com/country/:id",
+					"protocol": "https",
+					"host": [
+						"greenhouse-openapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"country",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "50"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Error: Country with start year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"/country with invalid start year\", function () {\r",
+							"    const actual=pm.response.json();\r",
+							"\r",
+							"    //check response\r",
+							"    pm.expect(actual).to.be.an('object')\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.expect(actual.message).to.eql('Invalid year values')\r",
+							"    \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://greenhouse-openapi.herokuapp.com/country/:id?startYear=2020",
+					"protocol": "https",
+					"host": [
+						"greenhouse-openapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"country",
+						":id"
+					],
+					"query": [
+						{
+							"key": "startYear",
+							"value": "2020"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "40",
+							"description": "Turkey"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Error: Country with end year",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"/country with invalid start year\", function () {\r",
+							"    const actual=pm.response.json();\r",
+							"\r",
+							"    //check response\r",
+							"    pm.expect(actual).to.be.an('object')\r",
+							"    pm.response.to.have.status(400);\r",
+							"    pm.expect(actual.message).to.eql('Invalid year values')\r",
+							"    \r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://greenhouse-openapi.herokuapp.com/country/:id?endYear=1980",
+					"protocol": "https",
+					"host": [
+						"greenhouse-openapi",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"country",
+						":id"
+					],
+					"query": [
+						{
+							"key": "endYear",
+							"value": "1980"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "40",
+							"description": "Turkey"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Countries",
+			"value": "43",
+			"type": "string"
+		},
+		{
+			"key": "Years",
+			"value": "[2014,2013,2012,2011,2010,2009,2008,2007,2006,2005,2004,2003,2002,2001,2000,1999,1998,1997,1996,1995,1994,1993,1992,1991,1990]",
+			"type": "string"
+		}
+	]
+}
